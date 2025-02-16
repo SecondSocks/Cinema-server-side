@@ -1,0 +1,12 @@
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String
+  email    String   @unique
+  password String
+  isAdmin  Boolean? @default(false)
+
+  favorites Film[]
+}
