@@ -1,3 +1,6 @@
 {
-	"cSpell.words": ["trivago"]
+	"cSpell.words": ["trivago"],
+	"editor.fontSize": 18,
+	"editor.fontFamily": "MonoLisa-Regular",
+	"editor.tabSize": 2
 }
