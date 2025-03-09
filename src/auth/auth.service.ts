@@ -26,20 +26,20 @@ export class AuthService {
 		const tokens = await this.issueTokens(user.id)
 
 		return {
-			user: this.userService.returnUserField(user),
+			user,
 			accessToken: tokens.accessToken,
 			refreshToken: tokens.refreshToken
 		}
 	}
 
 	async login(dto: AuthDto) {
-		if (dto.email === '' || dto.password === '') throw new BadRequestException('Request must contain email and password')
+		if (dto.email === '' || dto.password === '') throw new BadRequestException('Data is null')
 
 		const user = await this.validateUser(dto)
 		const tokens = await this.issueTokens(user.id)
 
 		return {
-			user: this.userService.returnUserField(user),
+			user,
 			accessToken: tokens.accessToken,
 			refreshToken: tokens.refreshToken
 		}
@@ -54,7 +54,7 @@ export class AuthService {
 		const tokens = await this.issueTokens(user.id)
 
 		return {
-			user: this.userService.returnUserField(user),
+			user,
 			accessToken: tokens.accessToken,
 			refreshToken: tokens.refreshToken
 		}
