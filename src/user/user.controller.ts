@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common'
 import { CurrentUser } from 'src/auth/decorators/user.decorator'
 import { UseAuth } from 'src/auth/guards/auth.guard'
+import { UUIdValidationPipe } from '../utils/pipes/id.validation.pipe'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { UUIdValidationPipe } from './pipes/id.validation.pipe'
 import { UserService } from './user.service'
 
 @Controller('user')
@@ -23,6 +23,14 @@ export class UserController {
     return this.userService.updateProfile(userId, dto)
   }
 
+  @Delete()
+  @UseAuth()
+  @HttpCode(200)
+  async deleteProfile(@CurrentUser('id') id: string) {
+    return this.userService.delete(id)
+  }
+
+  // For admin
   @UseAuth('admin')
   @UsePipes(new ValidationPipe())
   @Put(':id')
@@ -36,13 +44,6 @@ export class UserController {
   @HttpCode(200)
   async countUsers() {
     return this.userService.countUsers()
-  }
-
-  @Delete()
-  @UseAuth()
-  @HttpCode(200)
-  async deleteProfile(@CurrentUser('id') id: string) {
-    return this.userService.delete(id)
   }
 
   @UseAuth('admin')

@@ -7,4 +7,7 @@ model Film {
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String? @map("user_id")
+
+  genre   Genre?  @relation(fields: [genreId], references: [id], onDelete: SetNull)
+  genreId String? @map("genre_id")
 }

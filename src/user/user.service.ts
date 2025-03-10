@@ -83,7 +83,16 @@ export class UserService {
 			}
 		})
 	}
-
+	
+	async delete(id: string) {
+		return this.prismaService.user.delete({
+			where: {
+				id
+			}
+		})
+	}
+	
+	// For admin
 	async countUsers() {
 		return this.prismaService.user.count()	
 	}
@@ -123,11 +132,4 @@ export class UserService {
 		})
 	}
 
-	async delete(id: string) {
-		return this.prismaService.user.delete({
-			where: {
-				id
-			}
-		})
-	}
 }

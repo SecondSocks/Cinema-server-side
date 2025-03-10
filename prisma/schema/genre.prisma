@@ -1,0 +1,12 @@
+model Genre {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  description String
+  icon        String
+  slug        String @unique
+
+  films Film[]
+}
