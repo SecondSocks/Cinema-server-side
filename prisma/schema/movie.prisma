@@ -1,0 +1,36 @@
+model Movie {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  poster         String
+  bigPoster      String   @map("big_poster")
+  title          String
+  rating         Float?   @default(4.0)
+  countOpened    Int?     @default(0) @map("count_opened")
+  description    String
+  slug           String   @unique
+  videoUrl       String   @map("video_url")
+  isSendTelegram Boolean? @default(false) @map("is_send_telegram")
+
+  parameters   Parameters? @relation(fields: [parametersId], references: [id])
+  parametersId String?
+
+  genres Genre[]
+  actors Actor[]
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
+model Parameters {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  year     Int
+  duration Int
+  country  String
+
+  Movie Movie[]
+}

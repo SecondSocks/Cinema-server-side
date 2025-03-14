@@ -1,12 +1,13 @@
 model Genre {
   id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   name        String
   description String
   icon        String
   slug        String @unique
 
-  films Film[]
+  movie   Movie?  @relation(fields: [movieId], references: [id], onDelete: SetNull)
+  movieId String? @map("movie_id")
 }
