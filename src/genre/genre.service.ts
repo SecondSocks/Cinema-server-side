@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { GenreDto } from './dto/genre.dto'
 import { returnGenreObject } from './return-genre.object'
@@ -8,12 +8,16 @@ export class GenreService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getBySlug(slug: string) {
-		return this.prisma.genre.findUnique({
+		const genre = await this.prisma.genre.findUnique({
 			where: { slug },
 			select: {
 				...returnGenreObject
 			}
 		})
+
+		if (!genre) throw new NotFoundException('Genre not found')
+
+		return genre
 	}
 
 	async getAll(searchTerm?: string) {
@@ -65,12 +69,16 @@ export class GenreService {
 	// Functions which need admin role to work
 	
 	async getById(id: string) {
-		return this.prisma.genre.findUnique({
+		const genre = await this.prisma.genre.findUnique({
 			where: { id },
 			select: {
 				...returnGenreObject
 			}
 		})
+
+		if (!genre) throw new NotFoundException('Genre not found')
+
+		return genre
 	}
 
 	async create() {
@@ -89,21 +97,29 @@ export class GenreService {
 		})
 	}
 	async update(id: string, dto: GenreDto) {
-		return this.prisma.genre.update({
+		const genre = await this.prisma.genre.update({
 			where: { id },
 			data: dto,
 			select: {
 				...returnGenreObject
 			}
 		})
+
+		if (!genre) throw new NotFoundException('Genre not found')
+
+		return genre
 	}
 
 	async delete(id: string) {
-		return this.prisma.genre.delete({
+		const genre = await this.prisma.genre.delete({
 			where: { id },
 			select: {
 				...returnGenreObject
 			}
 		})
+
+		if (!genre) throw new NotFoundException('Genre not found')
+
+		return genre
 	}
 }

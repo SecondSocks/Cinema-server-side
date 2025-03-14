@@ -1,0 +1,9 @@
+model Actor {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name  String
+  slug  String @unique
+  photo String
+}
