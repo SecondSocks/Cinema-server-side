@@ -7,6 +7,5 @@ model Actor {
   slug  String @unique
   photo String
 
-  movie   Movie?  @relation(fields: [movieId], references: [id], onDelete: SetNull)
-  movieId String? @map("genre_id")
+  movies Movie[]
 }

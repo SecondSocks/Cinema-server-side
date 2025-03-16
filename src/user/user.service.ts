@@ -29,7 +29,7 @@ export class UserService {
 				favorites: {
 					select: {
 						id: true,
-						name: true,
+						title: true,
 						createdAt: true,
 						updatedAt: true
 					}
@@ -49,7 +49,7 @@ export class UserService {
 				favorites: {
 					select: {
 						id: true,
-						name: true,
+						title: true,
 						createdAt: true,
 						updatedAt: true
 					}

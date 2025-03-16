@@ -9,7 +9,6 @@ export class Parameters {
 	
 	@IsString()
 	country: string
-	
 }
 
 export class MovieDto {
@@ -38,21 +37,16 @@ export class MovieDto {
 	videoUrl: string
 	
 	@IsArray()
-	@IsString({
-		each: true
-	})
 	genres: string[]
 	
 	@IsArray()
-	@IsString({
-		each: true
-	})
 	actors: string[]
 
 	@IsBoolean()
 	isSendTelegram?: boolean
 	
 	@IsObject()
-	parameters?: Parameters
-
+	parameters?: {
+		create: Parameters
+	}
 }
