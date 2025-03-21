@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common'
 import { UseAuth } from 'src/auth/guards/auth.guard'
+import { UUIdValidationPipe } from 'src/utils/pipes/id.validation.pipe'
 import { MovieDto } from './dto/movie.dto'
 import { MovieService } from './movie.service'
 
@@ -21,25 +22,25 @@ export class MovieController {
 
   @Get('by-actor/:actorId')
   @HttpCode(200)
-  async getByActor(@Param('actorId') actorId: string) {
+  async getByActor(@Param('actorId', UUIdValidationPipe) actorId: string) {
     return this.movieService.getByActor(actorId)
   }
 
-  @Get('by-genres/:genreIds')
+  @Get('by-genres')
   @HttpCode(200)
-  async getByGenres(@Param('genreIds') genreIds: string[]) {
+  async getByGenres(@Body('genreIds') genreIds: string[]) {
     return this.movieService.getByGenres(genreIds)
   }
 
-  @Get('popular')
+  @Get('most-popular')
   @HttpCode(200)
   async getMostPopular() {
     return this.movieService.getMostPopular()
   }
 
-  @Patch('update-count-opened/:slug')
+  @Patch('update-count-opened')
   @HttpCode(200)
-  async updateCountOpened(slug: string) {
+  async updateCountOpened(@Body('slug') slug: string) {
     return this.movieService.updatedCountOpened(slug)
   }
 
@@ -47,7 +48,7 @@ export class MovieController {
   @Get(':id')
   @UseAuth('admin')
   @HttpCode(200)
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id', UUIdValidationPipe) id: string) {
     return this.movieService.getById(id)
   }
 
@@ -62,14 +63,14 @@ export class MovieController {
   @UseAuth('admin')
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
-  async update(@Param('id') id: string, @Body() dto: MovieDto) {
+  async update(@Param('id', UUIdValidationPipe) id: string, @Body() dto: MovieDto) {
     return this.movieService.update(id, dto)
   }
 
   @Delete(':id')
   @UseAuth('admin')
   @HttpCode(200)
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', UUIdValidationPipe) id: string) {
     return this.movieService.delete(id)
   }
 }

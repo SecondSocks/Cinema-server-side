@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { MovieDto } from './dto/movie.dto'
+import { returnMovieObject } from './return-movie.object'
 
 @Injectable()
 export class MovieService {
@@ -10,9 +11,9 @@ export class MovieService {
 		const movie = await this.prisma.movie.findUnique({
 			where: { slug },
 			select: {
-				actors: true,
-				genres: true
-			}
+				...returnMovieObject
+			},
+			
 		})
 
 		if (!movie) throw new NotFoundException('Movie not found')
@@ -41,8 +42,7 @@ export class MovieService {
 		return this.prisma.movie.findMany({
 			...options,
 			select: {
-				actors: true,
-				genres: true
+				...returnMovieObject
 			}
 		})
 	}
@@ -55,6 +55,9 @@ export class MovieService {
 						id: actorId
 					}
 				}
+			},
+			select: {
+				...returnMovieObject
 			}
 		})
 
@@ -73,6 +76,9 @@ export class MovieService {
 						}
 					}
 				}
+			},
+			select: {
+				...returnMovieObject
 			}
 		})
 		
@@ -90,6 +96,9 @@ export class MovieService {
 				},
 				orderBy: {
 					countOpened: 'desc'
+				},
+				select: {
+					...returnMovieObject
 				}
 			})
 		}
@@ -101,6 +110,11 @@ export class MovieService {
 				countOpened: {
 					increment: 1
 				}
+			},
+			select: {
+				id: true,
+				title: true,
+				countOpened: true
 			}
 		})
 
@@ -113,6 +127,9 @@ export class MovieService {
 	async getById(id: string) {
 		const movie = await this.prisma.movie.findUnique({
 			where: { id },
+			select: {
+				...returnMovieObject
+			}
 		})
 
 		if (!movie) throw new NotFoundException('Movie not found')
@@ -132,6 +149,9 @@ export class MovieService {
 				videoUrl: '',
 				genres: { connect: [] },
 				actors: { connect: [] },
+			},
+			select: {
+				...returnMovieObject
 			}
 		})
 
@@ -156,6 +176,9 @@ export class MovieService {
 				actors: {
 					connect: actors.map(id => ({ id }))
 				}
+			},
+			select: {
+				...returnMovieObject
 			}
 		})
 
@@ -171,6 +194,8 @@ export class MovieService {
 
 		if (!movie) throw new NotFoundException('Movie not found')
 
-		return movie
+		return {
+			message: `${id} has been deleted`
+		}
 	}
 }

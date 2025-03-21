@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { hash } from 'argon2'
 import { AuthDto } from 'src/auth/dto/auth.dto'
+import { returnMovieObject } from 'src/movie/return-movie.object'
 import { PrismaService } from 'src/prisma.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { returnUserObject, returnUserObjectForAdmin } from './return-user.object'
@@ -30,8 +31,7 @@ export class UserService {
 					select: {
 						id: true,
 						title: true,
-						createdAt: true,
-						updatedAt: true
+						slug: true,
 					}
 				}
 			},
@@ -58,6 +58,19 @@ export class UserService {
 		})
 	}
 
+	async getFavorites(userId: string) {
+		return this.prismaService.user.findUnique({
+			where: { id: userId },
+			select: {
+				favorites: {
+					select: {
+						...returnMovieObject
+					}
+				}
+			}
+		}) 
+	}
+
 	async updateProfile(id: string, dto: UpdateUserDto) {
 		const user = await this.getById(id)
 		 
@@ -82,6 +95,29 @@ export class UserService {
 				isAdmin: dto.isAdmin ? dto.isAdmin : user.isAdmin
 			}
 		})
+	}
+
+	async toggleFavorite(userId: string, movieId: string) {
+		const user = await this.getById(userId)
+		
+		if (!user) throw new NotFoundException('User not found')
+		
+		const isExists = user.favorites.some(movie => movie.id === movieId)
+		
+		await this.prismaService.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				favorites: {
+					[isExists ? 'disconnect' : 'connect']: {
+						id: movieId
+					}
+				}
+			}
+		})
+		
+		return { message: 'Success' }
 	}
 	
 	async delete(id: string) {

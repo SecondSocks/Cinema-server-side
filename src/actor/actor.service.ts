@@ -40,10 +40,24 @@ export class ActorService {
 				}
 			}
 	
-			// Aggregation 
 
 			return this.prisma.actor.findMany({
 				...options,
+				select: {
+					id: true,
+					name: true,
+					slug: true,
+					photo: true,
+					_count: {
+							select: {
+									movies: true
+							}
+					}
+			},
+				orderBy: {
+					createdAt: 'desc'
+				},
+				
 			})
 		}
 
