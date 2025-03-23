@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
+import { TelegramService } from 'src/telegram/telegram.service'
 import { MovieDto } from './dto/movie.dto'
 import { returnMovieObject } from './return-movie.object'
 
 @Injectable()
 export class MovieService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly telegramService: TelegramService
+	) {}
 
 	async getBySlug(slug: string) {
 		const movie = await this.prisma.movie.findUnique({
@@ -172,6 +176,11 @@ export class MovieService {
 	}
 
 	async update(id: string, dto: MovieDto) {
+		if (!dto.isSendTelegram) {
+			await this.sendNotification(dto)
+			dto.isSendTelegram = true
+		}
+
 		const { parameters, genres, actors, ...rest } = dto
 
 		const movie = await this.prisma.movie.update({
@@ -208,5 +217,26 @@ export class MovieService {
 		return {
 			message: `${id} has been deleted`
 		}
+	}
+
+	async sendNotification(dto: MovieDto) {
+		// if (process.env.NODE_ENV !== 'development')
+			// await this.telegramService.sendPhoto(dto.poster)
+		await this.telegramService.sendPhoto('https://pikuco.ru/upload/test_stable/947/9470830c7be753c0d39bc7949047315f.webp')
+
+		const text = `<b>${dto.title}</b>`
+
+		await this.telegramService.sendMessage(text, {
+			reply_markup: {
+				inline_keyboard: [
+					[
+						{
+							url: 'https://lord-serial2025.top/55-tob.html',
+							text: 'Go to watch'
+						}
+					]
+				]
+			}
+		})
 	}
 }
