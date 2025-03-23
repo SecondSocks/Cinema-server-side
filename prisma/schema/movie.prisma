@@ -19,8 +19,9 @@ model Movie {
   genres Genre[]
   actors Actor[]
 
-  User   User?   @relation(fields: [userId], references: [id])
+  User   User?    @relation(fields: [userId], references: [id])
   userId String?
+  Rating Rating[]
 }
 
 model Parameters {

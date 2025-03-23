@@ -123,6 +123,17 @@ export class MovieService {
 		return movie
 	}
 
+	async updateRating(movieId: string, rating: number) {
+		return this.prisma.movie.update({
+			where: {
+				id: movieId
+			},
+			data: {
+				rating
+			}
+		})
+	}
+
 	// Admin
 	async getById(id: string) {
 		const movie = await this.prisma.movie.findUnique({
