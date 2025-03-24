@@ -1,11 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { MovieService } from 'src/movie/movie.service'
 import { PrismaService } from 'src/prisma.service'
 import { GenreDto } from './dto/genre.dto'
+import { ICollection } from './genre.interface'
 import { returnGenreObject } from './return-genre.object'
 
 @Injectable()
 export class GenreService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly movieService: MovieService
+	) {}
 
 	async getBySlug(slug: string) {
 		const genre = await this.prisma.genre.findUnique({
@@ -58,10 +63,22 @@ export class GenreService {
 		})
 	}
 	
-	//TODO: will work on this later
 	async getCollections() {
 		const genres = await this.getAll()
-		const collections = genres
+		const collections = await Promise.all(
+			genres.map(async genre => {
+				const movieByGenre = await this.movieService.getByGenres([genre.id])
+
+				const result: ICollection = {
+					id: genre.id,
+					image: movieByGenre[0].bigPoster,
+					slug: genre.slug,
+					name: genre.name
+				}
+
+				return result
+			})
+		)
 
 		return collections
 	}
